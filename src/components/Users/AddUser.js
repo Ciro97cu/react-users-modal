@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // <-- importo React
+import React, { useState, useRef } from "react"; // <-- importo React
 import Card from "../UI/Card"; // <-- importo il componente Card
 import Button from "../UI/Button/Button"; // <-- importo il componente Button
 import ErrorModal from "../UI/ErrorModal"; // <-- importo il componente ErrorModal
@@ -6,42 +6,23 @@ import style from "./AddUser.module.css"; // <-- importo il file CSS
 
 const AddUser = props => {
 
-    const [userInput, setUserInput] = useState(
-        {
-            enteredName: "",
-            enteredAge: "",
-        }
-    )
-    const [error, setError] = useState();
+    const inputNameRef = useRef();
+    const inputAgeRef = useRef();
 
-    const nameChangeHnadler = (event) => {
-        setUserInput((prevDataUser) => {
-            return {
-                ...prevDataUser,
-                enteredName: event.target.value,
-            }
-        })
-    }
-
-    const ageChangeHandler = (event) => {
-        setUserInput((prevDataUser) => {
-            return {
-                ...prevDataUser,
-                enteredAge: event.target.value,
-            }
-        })
-    }
+    const [error, setError] = useState(); // <-- creo uno stato per gestire gli errori
 
     const addUserHandler = (event) => {
         event.preventDefault();
-        if (userInput.enteredName.trim().length === 0 || userInput.enteredAge.trim().length === 0) {
+        let enteredName = inputNameRef.current.value;
+        let enteredAge = inputAgeRef.current.value;
+        if (enteredName.trim().length === 0 || enteredAge.trim().length === 0) {
             setError(
                 {
                     title: "Errore",
                     message: "Non hai inserito tutti i dati necessari",
                 }
             );
-        } else if (+userInput.enteredAge < 1) {
+        } else if (+enteredAge < 1) {
             setError(
                 {
                     title: "Errore",
@@ -52,12 +33,12 @@ const AddUser = props => {
             props.onSaveUserData(
                 {
                     id: Math.floor(Math.random() * 1000).toString(),
-                    ...userInput
-                });
-            setUserInput({
-                enteredName: "",
-                enteredAge: "",
-            })
+                    "enteredName": enteredName,
+                    "enteredAge": enteredAge
+                }
+            );
+            inputNameRef.current.value = "";
+            inputAgeRef.current.value = "";
         }
     }
 
@@ -72,11 +53,11 @@ const AddUser = props => {
                 <form onSubmit={addUserHandler} >
                     <label htmlFor="name">Nome</label>
                     <input id="name" type="text" placeholder="Inserisci il nome"
-                        value={userInput.enteredName} onChange={nameChangeHnadler}
+                        ref={inputNameRef}
                     />
                     <label htmlFor="age">Età</label>
                     <input id="age" type="number" placeholder="Inserisci l'età"
-                        value={userInput.enteredAge} onChange={ageChangeHandler}
+                        ref={inputAgeRef}
                     />
                     <Button type="submit">Aggiungi Utente</Button>
                 </form>
