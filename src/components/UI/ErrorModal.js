@@ -33,7 +33,7 @@ const ErrorModal = props => {
     return (
         <>
             {ReactDOM.createPortal(<Backdrop onHideModal={props.onHideModal} />, document.getElementById('backdrop_root'))}
-            {ReactDOM.createPortal(<Overlay title={props.title} message={props.title} onHideModal={props.onHideModal} />, document.getElementById('overlay_root'))}
+            {ReactDOM.createPortal(<Overlay title={props.title} message={props.message} onHideModal={props.onHideModal} />, document.getElementById('overlay_root'))}
         </>
     )
 }
